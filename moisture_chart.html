@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Temperature Chart</title>
+
+    <!-- Include Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+</head>
+<body>
+    <!-- Bootstrap navigation bar -->
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/temp_chart">Temperature Sensor</a>
+        </li>
+	<li class="nav-item active">
+	<a class="nav-link" href="/moisture_chart">Moisture Chart</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/is_chart">Initial State</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Bootstrap jumbotron for title. {{name}} from Flask app -->
+    <div class="jumbotron text-center" style="margin-bottom:0; background-color:#c8d6e4;">
+      <h1>Data Visualization using Chart.js</h1>
+      <p>Moisture Sensor data from  Raspberry Pi</p>
+    </div>
+
+    <!-- Canvas target for JavaScript chart to display -->
+    <canvas class="mt-10" id="temp_chart"></canvas>
+
+    <!-- Table to display data (styled with Bootstrap) -->
+    <main role="main" class="container">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Timestamp</th>
+                    <th>Moisture Level</th>
+                </tr>
+            </thead>
+            <tbody id="moist_tbody"></tbody>
+        </table>
+    </main>
+
+    <!-- Footer (styled with Bootstrap). {{name}} from Flask app -->
+    <div class="jumbotron text-left" style="margin-bottom:0">
+      <p>&copy; {{name}} [CS 121]</p>
+    </div>
+
+    <!-- Include jQuery, Chart.js and local JavaScript chart file -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+    <script src="/static/moisture_chart.js"></script>
+
+</body>
+</html>

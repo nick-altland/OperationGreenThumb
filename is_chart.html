@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Temperature Chart</title>
+
+    <!-- Include Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+</head>
+<body>
+    <!-- Bootstrap navigation bar -->
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+      <ul class="navbar-nav">
+       
+	<li class="nav-item">
+          <a class="nav-link" href="/temp_chart">Temp Chart</a>
+        </li>
+	<li class="nav-item">
+          <a class="nav-link" href="/moisture_chart">Moisture Chart</a>
+        </li>
+	
+        <li class="nav-item active">
+          <a class="nav-link" href="/is_chart">Initial State</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Bootstrap jumbotron for title. {{name}} from Flask app -->
+    <div class="jumbotron text-center" style="margin-bottom:0; background-color:#FFB6C1;">
+      <h1>Data Visualization using Chart.js</h1>
+      <p> Sensor data from  Raspberry Pi</p>
+    </div>
+
+
+<!-- This is where we would call and display the high low and average -->
+
+
+    <div class="embed-responsive embed-responsive-16by9"><iframe src="https://iot.app.initialstate.com/embed/#/tiles/bkt_wsf8laa2bud4"></iframe></div>    
+    <div class="embed-responsive embed-responsive-16by9"><iframe src="https://iot.app.initialstate.com/embed/#/tiles/bkt_12u93e8lbaabt5t"></iframe></div>
+    <div class="embed-responsive embed-responsive-16by9"><iframe src="https://iot.app.initialstate.com/embed/#/tiles/bkt_1j8bdq8lbadjbmz"></iframe></div>
+
+</body>
+</html>
