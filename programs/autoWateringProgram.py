@@ -6,7 +6,7 @@ import time
 import RPi.GPIO as GPIO
 
 # Constants
-MIN_IN_DAY = 96
+MOIST_LEVEL = 40
 
 # Define SMBus (System Management Bus) port and address for
 # I2C sensor communcation
@@ -21,8 +21,8 @@ GPIO.setup(21, GPIO.OUT) # Solenoid out
 # Table Header for display output
 # Taken from lab07, edited to fit
 def show_table_header():
-    print("DATE\t   TIME \t    High \t Low \t Average")
-    print("-----------------------------------------------------------")
+    print("DATE\t   TIME \t    Temp \t Moisture")
+    print("------------------------------------------------")
 
 # Read the sensor data from the temperature sensor, return a value in Celsius
 # Taken from lab07, no changes made
@@ -35,72 +35,75 @@ def get_temperature():
 
 def moisture_sensor(level):
     # Checks the value from the moisture sensor. If it is lower then then the set level,
-    # open up valve to water then close it
-    if level % 2 == 0:
-        GPIO.output(21,True)
-        time.sleep(1)
-        GPIO.output(21,False)
+    return level
 
 # Take data from sensor and monitor any changes
-def temp_data(high, low, average):
-    i = 0
-    while i <= 1:
-        # Get temperature reading from sensor in C, convert to F
-        celcius = get_temperature()
-        temp = (celcius * 1.8 + 32)
+def temp_data():
+    # Get temperature reading from sensor in C, convert to F
+    celcius = get_temperature()
+    temp = (celcius * 1.8 + 32)
 
-        # Set high/low using a series of if loops
-        if temp > high:
-            high = temp
-
-        if temp < low:
-            low = temp
-
-        i+=1
-        # Sleep for a second
-        time.sleep(1)
-
-    # Save the average
-    average = (high + low)/2
-
-    # Return the high, low, and average
-    return high, low, average
+    # Return the temp
+    return temp
 
 # Display data to the screen, then send it to the database. Main loop
 # Starter code borrowed from lab07, but heavily modified
-def display_data(count):
-    # Set variables for high, low, and average temps
-    highTemp = 0
-    lowTemp = 1000
-    averageTemp = 0
-
+def display_data():
     # Get time
     now = datetime.datetime.now()
 
     # Call temp_data to record the tempeture data
-    highTemp, lowTemp, averageTemp = temp_data(highTemp, lowTemp, averageTemp)
+    temp = temp_data()
 
     # Call the moisture sensor, to check to see if the plant needs to be watered
-    moisture_sensor(count)
+    # Record the moisture level for output
+    moist_level = moisture_sensor(2)
 
     # Display data record to screen
     # Display data written by Professor Eddy, but modified by Nick
     timestamp = now.strftime("%m/%d/%Y %H:%M")
-    outstring = str(timestamp) + "\t" + str(format(highTemp, '10.4f')) + "F" \
-    + str(format(lowTemp, '10.4f')) + "F" + str(format(averageTemp, '10.4f')) + "F" + "\n"
+    outstring = str(timestamp) + "\t" + str(format(temp, '10.4f')) + "F" \
+    + str(format(moist_level, '10.0f'))
     print(outstring.rstrip())
+
+    return temp, moist_level
 
 # Show table header
 show_table_header()
 
 # Call function to print data to screen
-while True:
-    count = 0
-    while count < MIN_IN_DAY:
-        display_data(count)
-        count+=1
+try:
+    # Set variables to see if plant needs watering, average temp, and mins to sleep
+    needWatering = 0
+    averageTemp = 0
+    minsToSleep = 0
+    timesWatered = 0
+
+    # Create an array to store the averages, so we can get an overall average at the end
+    averageArray = []
+
+    while True:
+        # Call the display_data function to get the moisture level and new temp
+        newTemp, needWatering = display_data()
+        averageArray.append(newTemp) # Add new temp to the array of temps
+
+        # Check to see if the soil is dry enough to water
+        if needWatering > MOIST_LEVEL:
+            GPIO.output(21,True)
+            time.sleep(15)
+            GPIO.output(21,False)
+            # Add one to the times the plant was watered
+            timesWatered += 1
+
+        # Orient the cycle to now start every 15 min, on the hour (00, 15, 30, 45, etc...)
+        minsToSleep = 15 - datetime.datetime.now().minute % 15
+        time.sleep(minsToSleep * 60)
 
 # Cleanup GPIO pins on program termination
-
+finally:
+    # Call function to print data to screen
+    averageTemp = (sum(averageArray)) / len(averageArray)
+    print("The average temp was: " + str(averageTemp) + " and the plant was watered " + str(timesWatered) + " times")
+    GPIO.cleanup()
 
 
