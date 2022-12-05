@@ -6,7 +6,8 @@ import time
 import RPi.GPIO as GPIO
 
 # Constants
-MOIST_LEVEL = 40
+MOIST_LEVEL = 40 # What is the acceptable minimum moisture level
+CHECK_RATE = 1  # How often do we want the program to run, in minutes
 
 # Define SMBus (System Management Bus) port and address for
 # I2C sensor communcation
@@ -57,7 +58,7 @@ def display_data():
 
     # Call the moisture sensor, to check to see if the plant needs to be watered
     # Record the moisture level for output
-    moist_level = moisture_sensor(2)
+    moist_level = moisture_sensor(41)
 
     # Display data record to screen
     # Display data written by Professor Eddy, but modified by Nick
@@ -96,7 +97,7 @@ try:
             timesWatered += 1
 
         # Orient the cycle to now start every 15 min, on the hour (00, 15, 30, 45, etc...)
-        minsToSleep = 15 - datetime.datetime.now().minute % 15
+        minsToSleep = CHECK_RATE - datetime.datetime.now().minute % CHECK_RATE
         time.sleep(minsToSleep * 60)
 
 # Cleanup GPIO pins on program termination
