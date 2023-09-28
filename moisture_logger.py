@@ -1,4 +1,5 @@
-# CS121 - Temperature Sensor Lab
+# Moisture Logger:
+# This is what ran on the Raspberry Pi to track the data from the temperature sensor
 
 import mysql.connector
 import json
