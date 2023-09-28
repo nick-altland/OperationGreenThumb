@@ -1,4 +1,4 @@
-# CS121 - Temperature Sensor Lab
+# Tracks the temp
 
 import mysql.connector
 import json
